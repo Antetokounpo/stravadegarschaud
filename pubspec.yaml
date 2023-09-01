@@ -1,0 +1,32 @@
+name: stravadegarschaud
+description: Un Strava pour gars chaud
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 0.0.1+1
+
+environment:
+  sdk: '>=2.19.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  hive: ^4.0.0-dev.2
+  intl: ^0.18.1
+  isar_flutter_libs: ^4.0.0-dev.13
+  path: ^1.8.3
+  path_provider: ^2.1.0
+  provider: ^6.0.0
+  share_plus: ^7.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
