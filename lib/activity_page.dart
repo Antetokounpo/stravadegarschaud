@@ -32,16 +32,21 @@ class ActivityModel extends ChangeNotifier {
   }
 
   Duration duration = const Duration();
+  DateTime timeLastUpdate = DateTime.now();
   Timer? timer;
-  final addSeconds = 1;
   var stopwatchRunning = false;
 
   void startTimer() {
-    timer = Timer.periodic(Duration(seconds: addSeconds), (timer) => addTime());
+    timeLastUpdate = DateTime.now();
+    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) => addTime());
   }
 
   void addTime() {
-    duration = Duration(seconds: duration.inSeconds + addSeconds);
+    var now = DateTime.now();
+    var timeDiff = now.difference(timeLastUpdate);
+    timeLastUpdate = now;
+
+    duration = duration + timeDiff;
     if(duration.inSeconds % 10 == 0)  setBloodAlcoholContent();
     notifyListeners();
   }
