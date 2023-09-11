@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  go_router: ^10.1.2
   hive: ^4.0.0-dev.2
   intl: ^0.18.1
   isar_flutter_libs: ^4.0.0-dev.13
