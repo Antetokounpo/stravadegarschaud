@@ -6,11 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:hive/hive.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:stravadegarschaud/brosse_autosaver.dart';
 
 import 'drink_data.dart';
 
 class ActivityModel extends ChangeNotifier {
   final brossesBox = Hive.box(name: 'brosses');
+  final currentBrosseBox = BrosseAutosaver.currentBrosseBox;
 
   var _isRunning = false;
 
@@ -18,11 +20,13 @@ class ActivityModel extends ChangeNotifier {
 
   void toggleRunning() {
     _isRunning = !_isRunning;
-
+    
     if(_isRunning) {
       startTimer();
+      setBloodAlcoholContent();
     } else {
       stopTimer();
+      BrosseAutosaver.resetCurrentBrosse();
       saveBrosse();
       resetTimer();
       resetConsommations();
@@ -31,10 +35,10 @@ class ActivityModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Duration duration = const Duration();
-  DateTime timeLastUpdate = DateTime.now();
+  Duration duration = BrosseAutosaver.duration;
+  DateTime? timeLastUpdate;
+
   Timer? timer;
-  var stopwatchRunning = false;
 
   void startTimer() {
     timeLastUpdate = DateTime.now();
@@ -43,11 +47,14 @@ class ActivityModel extends ChangeNotifier {
 
   void addTime() {
     var now = DateTime.now();
-    var timeDiff = now.difference(timeLastUpdate);
+    var timeDiff = now.difference(timeLastUpdate!);
     timeLastUpdate = now;
 
     duration = duration + timeDiff;
-    if(duration.inSeconds % 10 == 0)  setBloodAlcoholContent();
+
+    autoSaveBrosse();
+
+    if(duration.inSeconds % 60 == 0)  setBloodAlcoholContent();
     notifyListeners();
   }
 
@@ -70,12 +77,23 @@ class ActivityModel extends ChangeNotifier {
     Share.share(json.encode(brosses));
   }
 
-  List<Consommation> consommations = [];
-  Map<String, int> drinkCounts = {for(final drink in drinkDataList) drink.name : 0};
+  void autoSaveBrosse() {
+    BrosseAutosaver.saveCurrentBrosse(
+      consommations: consommations,
+      drinkCounts: drinkCounts,
+      duration: duration,
+      timeLastUpdate: timeLastUpdate!
+    );
+  }
+
+  List<Consommation> consommations = BrosseAutosaver.consommations;
+  Map<String, int> drinkCounts = BrosseAutosaver.drinkCounts;
   
   void addConsommation(Consommation conso) {
     consommations.add(conso);
     drinkCounts[conso.drink.name] = (drinkCounts[conso.drink.name] ?? 0) + 1;
+
+    autoSaveBrosse();
     setBloodAlcoholContent();
     notifyListeners();
   }
@@ -83,6 +101,8 @@ class ActivityModel extends ChangeNotifier {
   void removeConsommation(int index) {
     drinkCounts[consommations[index].drink.name] = (drinkCounts[consommations[index].drink.name] ?? 0) - 1;
     consommations.removeAt(index);
+
+    autoSaveBrosse(); 
     setBloodAlcoholContent();
     notifyListeners();
   }
@@ -124,31 +144,42 @@ class ActivityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-  return WillPopScope(
-    onWillPop: () async { // This disables the going back button
-      return false;
-    },
-    child: Scaffold(
-        body: SafeArea(
-        child: Center(
-          child: ChangeNotifierProvider(
-            create: (context) => ActivityModel(),
-            child: Column(
-              children: [
-                ChronometerCard(),
-                CardDivider(),
-                BACCard(),
-                CardDivider(),
-                DrinkAdder(),
-                CardDivider(),
-                Expanded(child: ToggleButton()), // Expanded seems to center the button vertically
-              ],
+    // Put page in running mode if the brosse wasn't stopped manually.
+    final model = ActivityModel();
+    if(BrosseAutosaver.wasRunning) model.toggleRunning();
+
+    return WillPopScope(
+      onWillPop: () async { // This disables the going back button
+        return false;
+      },
+      child: Scaffold(
+          body: SafeArea(
+          child: Center(
+            child: ChangeNotifierProvider(
+              create: (context) => model,
+              child: PageLayout(),
             ),
           ),
-        ),
-      )
-    ),
-  );
+        )
+      ),
+    );
+  }
+}
+
+class PageLayout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ChronometerCard(),
+        CardDivider(),
+        BACCard(),
+        CardDivider(),
+        DrinkAdder(),
+        CardDivider(),
+        Expanded(child: ToggleButton()), // Expanded seems to center the button vertically
+      ],
+    );
   }
 }
 
@@ -366,7 +397,7 @@ class DrinkAdder extends StatelessWidget {
 void showModifyDialog(BuildContext context) {
 
   var activity = context.read<ActivityModel>();
-  final consommations = activity.consommations;
+  var consommations = activity.consommations.reversed.toList(); // Reversed so the last conso is first in the displayed list
 
   final dialog = StatefulBuilder(
     builder: ((context, setState) {
