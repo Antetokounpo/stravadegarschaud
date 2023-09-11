@@ -395,12 +395,12 @@ class DrinkAdder extends StatelessWidget {
 }
 
 void showModifyDialog(BuildContext context) {
-
   var activity = context.read<ActivityModel>();
-  var consommations = activity.consommations.reversed.toList(); // Reversed so the last conso is first in the displayed list
 
   final dialog = StatefulBuilder(
     builder: ((context, setState) {
+      var consommations = activity.consommations.toList(); // This needs to be inside the builder to have the updated contents when dialog is rebuilt
+
       return SimpleDialog(
         title: const Text("Modifier consos antérieures",),
         children: [
@@ -408,7 +408,7 @@ void showModifyDialog(BuildContext context) {
             height: 500,
             width: 500,
             child: ListView(
-              children: [for (var i = 0; i < consommations.length; ++i)
+              children: [for (var i = consommations.length - 1; i >= 0; --i) // List in reverse order so that the last conso in on top
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2.0),
                   child: Card(
