@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:stravadegarschaud/activity_page.dart';
 import 'package:stravadegarschaud/config_page.dart';
 
-class NavigationPage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  State<NavigationPage> createState() => _NavigationPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _NavigationPageState extends State<NavigationPage> {
+class _HomePageState extends State<HomePage> {
   var _selectedIndex = 0;
 
   static const List<Widget> _pages = [

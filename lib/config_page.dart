@@ -1,24 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:stravadegarschaud/drink_data.dart';
 
-class ConfigModel extends ChangeNotifier {
-  final configBox = Hive.box(name: 'config');
-
-  Drinker get drinker => Drinker.fromJson(configBox.get('drinker', defaultValue: const Drinker(Sex.male, 0).toJson()));
-  
-  void setSex(Sex sex) {
-    configBox['drinker'] = Drinker(sex, drinker.weight);
-    notifyListeners();
-  }
-
-  void setWeight(int weight) {
-    print(weight);
-    configBox['drinker'] = Drinker(drinker.sex, weight);
-    notifyListeners();
-  }
-}
+import 'app_model.dart';
 
 class ConfigPage extends StatelessWidget {
   const ConfigPage({super.key});
@@ -28,14 +12,11 @@ class ConfigPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: ChangeNotifierProvider(
-            create: (context) => ConfigModel(),
-            child: Column(
-              children: [
-                SexSelector(),
-                WeightSetter()
-              ],
-            ),
+          child: Column(
+            children: [
+              SexSelector(),
+              WeightSetter()
+            ],
           )
         ),
       ),
@@ -48,7 +29,7 @@ class SexSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var config = context.watch<ConfigModel>();
+    var config = context.watch<AppModel>();
 
     return DropdownButton<Sex>(
       value: config.drinker.sex,
@@ -72,7 +53,7 @@ class SexSelector extends StatelessWidget {
 class WeightSetter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var config = context.watch<ConfigModel>();
+    var config = context.watch<AppModel>();
 
     return TextFormField(
       decoration: const InputDecoration(

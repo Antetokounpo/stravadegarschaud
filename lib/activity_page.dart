@@ -1,140 +1,9 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:hive/hive.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:stravadegarschaud/brosse_autosaver.dart';
 
 import 'drink_data.dart';
-
-class ActivityModel extends ChangeNotifier {
-  final brossesBox = Hive.box(name: 'brosses');
-  final currentBrosseBox = BrosseAutosaver.currentBrosseBox;
-
-  var _isRunning = false;
-
-  bool get isRunning => _isRunning;
-
-  void toggleRunning() {
-    _isRunning = !_isRunning;
-    
-    if(_isRunning) {
-      startTimer();
-      setBloodAlcoholContent();
-    } else {
-      stopTimer();
-      BrosseAutosaver.resetCurrentBrosse();
-      saveBrosse();
-      resetTimer();
-      resetConsommations();
-    }
-
-    notifyListeners();
-  }
-
-  Duration duration = BrosseAutosaver.duration;
-  DateTime? timeLastUpdate;
-
-  Timer? timer;
-
-  void startTimer() {
-    timeLastUpdate = DateTime.now();
-    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) => addTime());
-  }
-
-  void addTime() {
-    var now = DateTime.now();
-    var timeDiff = now.difference(timeLastUpdate!);
-    timeLastUpdate = now;
-
-    duration = duration + timeDiff;
-
-    autoSaveBrosse();
-
-    if(duration.inSeconds % 60 == 0)  setBloodAlcoholContent();
-    notifyListeners();
-  }
-
-  void stopTimer() {
-    timer?.cancel();
-    notifyListeners();
-  }
-
-  void resetTimer() {
-    duration = const Duration();
-    notifyListeners();
-  }
-
-  void saveBrosse() {
-    brossesBox.add(
-      Brosse(drinker: drinker, consommations: consommations).toJson()
-    );
-
-    final brosses = brossesBox.getRange(0, brossesBox.length);
-    Share.share(json.encode(brosses));
-  }
-
-  void autoSaveBrosse() {
-    BrosseAutosaver.saveCurrentBrosse(
-      consommations: consommations,
-      drinkCounts: drinkCounts,
-      duration: duration,
-      timeLastUpdate: timeLastUpdate!
-    );
-  }
-
-  List<Consommation> consommations = BrosseAutosaver.consommations;
-  Map<String, int> drinkCounts = BrosseAutosaver.drinkCounts;
-  
-  void addConsommation(Consommation conso) {
-    consommations.add(conso);
-    drinkCounts[conso.drink.name] = (drinkCounts[conso.drink.name] ?? 0) + 1;
-
-    autoSaveBrosse();
-    setBloodAlcoholContent();
-    notifyListeners();
-  }
-
-  void removeConsommation(int index) {
-    drinkCounts[consommations[index].drink.name] = (drinkCounts[consommations[index].drink.name] ?? 0) - 1;
-    consommations.removeAt(index);
-
-    autoSaveBrosse(); 
-    setBloodAlcoholContent();
-    notifyListeners();
-  }
-
-  void resetConsommations() {
-    consommations = [];
-    drinkCounts = {for(final drink in drinkDataList) drink.name : 0};
-    setBloodAlcoholContent();
-    notifyListeners();
-  }
-
-  final Drinker drinker = const Drinker(Sex.male, 70);
-
-  var bloodAlcoholContent = 0.0;
-
-  void setBloodAlcoholContent() {
-    var firstSip = const Duration(); // première gorgée à 0 seconde
-    var bac = 0.0;
-    for(final conso in consommations) {
-      var numerator = 0.806*conso.drink.inStandardDrinks;
-      var denominator = 1.1*(drinker.sex == Sex.female ? 0.49 : 0.522)*drinker.weight;
-      var subTerm = 0.0017 * ((duration.inSeconds - firstSip.inSeconds) / 3600.0 + 0.03*(duration.inSeconds - conso.timeConsumed.inSeconds) / 3600.0);
-
-      bac += numerator/denominator - subTerm;
-
-      firstSip = conso.timeConsumed;
-    }
-
-    bloodAlcoholContent = bac;
-  }
-
-}
+import 'app_model.dart';
 
 class ActivityPage extends StatelessWidget {
   const ActivityPage({
@@ -144,10 +13,6 @@ class ActivityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    // Put page in running mode if the brosse wasn't stopped manually.
-    final model = ActivityModel();
-    if(BrosseAutosaver.wasRunning) model.toggleRunning();
-
     return WillPopScope(
       onWillPop: () async { // This disables the going back button
         return false;
@@ -155,10 +20,7 @@ class ActivityPage extends StatelessWidget {
       child: Scaffold(
           body: SafeArea(
           child: Center(
-            child: ChangeNotifierProvider(
-              create: (context) => model,
-              child: PageLayout(),
-            ),
+            child: PageLayout(),
           ),
         )
       ),
@@ -198,7 +60,7 @@ class ChronometerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var elapsedSeconds = context.select<ActivityModel, int>((activity) => activity.duration.inSeconds);
+    var elapsedSeconds = context.select<AppModel, int>((activity) => activity.duration.inSeconds);
 
     var chronoString = getChronoString(elapsedSeconds);
 
@@ -245,7 +107,7 @@ class ToggleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     const buttonSize = 40.0;
 
-    var isRunning = context.select<ActivityModel, bool>((activity) => activity.isRunning);
+    var isRunning = context.select<AppModel, bool>((activity) => activity.isRunning);
 
     Icon buttonIcon;
     if (isRunning) {
@@ -264,7 +126,7 @@ class ToggleButton extends StatelessWidget {
       padding: const EdgeInsets.all(5.0),
       child: FilledButton(
         onPressed: () {
-          var activity = context.read<ActivityModel>();
+          var activity = context.read<AppModel>();
 
 
           if(isRunning) {
@@ -322,7 +184,7 @@ class BACCard extends StatelessWidget {
     final displayStyle = theme.textTheme.displayMedium;
     final labelStyle = theme.textTheme.labelLarge;
 
-    var bac = context.select<ActivityModel, double>((activity) => activity.bloodAlcoholContent);
+    var bac = context.select<AppModel, double>((activity) => activity.bloodAlcoholContent);
 
     return Column(
       children: [
@@ -395,7 +257,7 @@ class DrinkAdder extends StatelessWidget {
 }
 
 void showModifyDialog(BuildContext context) {
-  var activity = context.read<ActivityModel>();
+  var activity = context.read<AppModel>();
 
   final dialog = StatefulBuilder(
     builder: ((context, setState) {
@@ -471,14 +333,14 @@ class DrinkTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var drinkCounts = context.watch<ActivityModel>().drinkCounts;
+    var drinkCounts = context.watch<AppModel>().drinkCounts;
     var currentDrinkCount = drinkCounts[drink.name] ?? 0;
 
     return SizedBox(
         width: 200.0,
         child: ElevatedButton(
           onPressed: () {
-            var activity = context.read<ActivityModel>();
+            var activity = context.read<AppModel>();
             if(activity.isRunning) {
               activity.addConsommation(
                 Consommation(drink, activity.duration)
