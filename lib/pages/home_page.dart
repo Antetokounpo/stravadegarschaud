@@ -1,8 +1,8 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:stravadegarschaud/activity_page.dart';
-import 'package:stravadegarschaud/config_page.dart';
+import 'package:stravadegarschaud/pages/activity_page.dart';
+import 'package:stravadegarschaud/pages/config_page.dart';
 
 class HomePage extends StatefulWidget {
   @override

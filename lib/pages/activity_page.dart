@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-import 'drink_data.dart';
-import 'app_model.dart';
+import '../common/drink_data.dart';
+import '../models/app_model.dart';
 
 class ActivityPage extends StatelessWidget {
   const ActivityPage({

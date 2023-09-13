@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:stravadegarschaud/brosse_autosaver.dart';
+import 'package:stravadegarschaud/common/brosse_autosaver.dart';
 
-import 'drink_data.dart';
+import '../common/drink_data.dart';
 
 
 class AppModel extends ChangeNotifier {

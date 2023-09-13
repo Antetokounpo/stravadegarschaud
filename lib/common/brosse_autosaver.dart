@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:stravadegarschaud/drink_data.dart';
+import 'package:stravadegarschaud/common/drink_data.dart';
 
 class BrosseAutosaver {
   static final currentBrosseBox = Hive.box(name: 'current_brosse');

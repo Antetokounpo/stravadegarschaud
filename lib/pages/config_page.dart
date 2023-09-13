@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stravadegarschaud/drink_data.dart';
+import 'package:stravadegarschaud/common/drink_data.dart';
 
-import 'app_model.dart';
+import '../models/app_model.dart';
 
 class ConfigPage extends StatelessWidget {
   const ConfigPage({super.key});

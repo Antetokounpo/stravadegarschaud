@@ -3,9 +3,9 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'home_page.dart';
-import 'app_model.dart';
-import 'brosse_autosaver.dart';
+import 'pages/home_page.dart';
+import 'models/app_model.dart';
+import 'common/brosse_autosaver.dart';
 
 
 void main() async {
