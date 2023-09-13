@@ -30,10 +30,10 @@ class _HomePageState extends State<HomePage> {
           });
         }
         ,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.whatshot),
-            label: "Activité"
+            label: "Brosse"
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
