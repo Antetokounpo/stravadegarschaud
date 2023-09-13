@@ -66,7 +66,7 @@ enum Sex {
 
 class Drinker {
   final Sex sex;
-  final double weight;
+  final int weight;
 
   const Drinker(this.sex, this.weight);
 
@@ -77,7 +77,7 @@ class Drinker {
 
   factory Drinker.fromJson(Map<String, dynamic> json) => Drinker(
     json['sex'] ? Sex.male : Sex.female,
-    json['weight'] as double,
+    json['weight'] as int,
   );
 }
 

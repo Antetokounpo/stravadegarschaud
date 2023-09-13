@@ -6,16 +6,16 @@ import 'package:stravadegarschaud/drink_data.dart';
 class ConfigModel extends ChangeNotifier {
   final configBox = Hive.box(name: 'config');
 
-  Drinker get drinker => Drinker.fromJson(configBox.get('drinker', defaultValue: const Drinker(Sex.male, 0.0).toJson()));
+  Drinker get drinker => Drinker.fromJson(configBox.get('drinker', defaultValue: const Drinker(Sex.male, 0).toJson()));
   
   void setSex(Sex sex) {
     configBox['drinker'] = Drinker(sex, drinker.weight);
     notifyListeners();
   }
 
-  void setWeight(double weight) {
+  void setWeight(int weight) {
     print(weight);
-    configBox['weight'] = Drinker(drinker.sex, weight);
+    configBox['drinker'] = Drinker(drinker.sex, weight);
     notifyListeners();
   }
 }
@@ -78,7 +78,7 @@ class WeightSetter extends StatelessWidget {
       ),
       onChanged: ((value) {
         try {
-          config.setWeight(double.parse(value));
+          config.setWeight(int.parse(value));
         } catch (e) {} // If invalid value, just don't save it
       }),
       keyboardType: TextInputType.number,
