@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:stravadegarschaud/config_page.dart';
 
 import 'activity_page.dart';
+import 'navigation_page.dart';
 
 
 void main() async {
@@ -17,7 +18,7 @@ void main() async {
 
 
 final _router = GoRouter(
-  initialLocation: '/activity',
+  initialLocation: '/main',
   routes: [
     GoRoute(
       path: '/activity',
@@ -26,6 +27,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/config',
       builder: (context, state) => ConfigPage(),
+    ),
+    GoRoute(
+      path: '/main',
+      builder: (context, state) => NavigationPage(),
     )
   ]
 );

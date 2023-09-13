@@ -218,7 +218,7 @@ class ChronometerCard extends StatelessWidget {
           child: Text("Temps", style: titleStyle),
         ),
         Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(12.0),
           child: Text(chronoString, style: chronoStyle),
         ),
       ],
@@ -331,7 +331,7 @@ class BACCard extends StatelessWidget {
           child: Text('Alcoolémie', style: titleStyle),
         ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
