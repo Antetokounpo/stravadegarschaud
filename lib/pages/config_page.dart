@@ -109,11 +109,14 @@ class AddDrinkForm extends StatefulWidget {
     required this.name,
     required this.volume,
     required this.abv,
+    this.modifyIndex,
   });
 
   final String name;
   final String volume;
-  final String abv; 
+  final String abv;
+
+  final int? modifyIndex;
 
   @override
   State<AddDrinkForm> createState() => _AddDrinkFormState();
@@ -205,8 +208,13 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
                         double abv = double.parse(abvController!.text) / 100.0;
                 
                         var appModel = context.read<AppModel>();
-                        appModel.addDrink(DrinkData(name, "assets/iceberg.png", abv, volume));
-                
+
+                        var drink = DrinkData(name, "assets/iceberg.png", abv, volume);
+                        if(widget.modifyIndex == null) {
+                          appModel.addDrink(drink);
+                        } else {
+                          appModel.modifyDrink(drink, widget.modifyIndex!);
+                        }
                         Navigator.of(context).pop();
                       }
                     },
@@ -222,7 +230,7 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
   }
 }
 
-void showAddDrinkDialog(BuildContext context, {name = "", volume = "", abv = "",}) {
+void showAddDrinkDialog(BuildContext context, {name = "", volume = "", abv = "", modifyIndex}) {
 
   final dialog = StatefulBuilder(
     builder: ((context, setState) {
@@ -230,7 +238,7 @@ void showAddDrinkDialog(BuildContext context, {name = "", volume = "", abv = "",
       return SimpleDialog(
         title: const Text("Ajouter nouveau drink",),
         children: [
-          AddDrinkForm(name: name, volume: volume.toString(), abv: (abv*100).toString())
+          AddDrinkForm(name: name, volume: volume.toString(), abv: (abv*100).toString(), modifyIndex: modifyIndex),
         ],
       );
     })
@@ -279,7 +287,7 @@ class ConsosList extends StatelessWidget {
                     final volume = drinkDataList[index].volume;
                     final abv = drinkDataList[index].abv;
 
-                    showAddDrinkDialog(context, name: name, volume: volume, abv: abv);
+                    showAddDrinkDialog(context, name: name, volume: volume, abv: abv, modifyIndex: index);
                   },
                   child: const Icon(Icons.edit),
                 )

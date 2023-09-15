@@ -166,4 +166,10 @@ class AppModel extends ChangeNotifier {
     consosBox.deleteAt(index);
     notifyListeners();
   }
+
+  void modifyDrink(DrinkData drink, int index) {
+    consosBox.putAt(index, drink);
+    drinkDataList[index] = drink;
+    notifyListeners();
+  }
 }
