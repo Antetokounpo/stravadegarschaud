@@ -306,6 +306,8 @@ class DrinkList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    var drinkDataList = context.select<AppModel, List<DrinkData>>((model) => model.drinkDataList);
+
     return SizedBox(
       height: 250.0,
       child: ListView.separated(

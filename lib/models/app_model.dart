@@ -12,6 +12,7 @@ import '../common/drink_data.dart';
 class AppModel extends ChangeNotifier {
   final brossesBox = Hive.box(name: 'brosses');
   final configBox = Hive.box(name: 'config');
+  final consosBox = Hive.box(name: 'consos');
   final currentBrosseBox = BrosseAutosaver.currentBrosseBox;
 
   var _isRunning = false;
@@ -73,7 +74,7 @@ class AppModel extends ChangeNotifier {
       Brosse(drinker: drinker, consommations: consommations).toJson()
     );
 
-    final brosses = brossesBox.getRange(0, brossesBox.length);
+    final brosses = brossesBox.getRange(0, brossesBox.length); // getAll marchait pas je crois
     Share.share(json.encode(brosses));
   }
 
@@ -143,6 +144,26 @@ class AppModel extends ChangeNotifier {
   void setWeight(int weight) {
     configBox['drinker'] = Drinker(drinker.sex, weight);
     setBloodAlcoholContent();
+    notifyListeners();
+  }
+
+  List<DrinkData>? _drinkDataList;
+
+  List<DrinkData> get drinkDataList {
+    _drinkDataList ??= consosBox.getRange(0, consosBox.length).map(((e) => DrinkData.fromJson(e))).toList();
+
+    return _drinkDataList!;
+  }
+
+  void addDrink(DrinkData drink) {
+    consosBox.add(drink);
+    drinkDataList.add(drink); // Is drinkDataList a reference?
+    notifyListeners();
+  }
+
+  void removeDrink(int index) {
+    drinkDataList.removeAt(index);
+    consosBox.deleteAt(index);
     notifyListeners();
   }
 }

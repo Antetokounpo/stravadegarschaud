@@ -26,6 +26,7 @@ class DrinkData {
   };
 }
 
+/*
 const drinkDataList = {
   DrinkData("Bleue Dry 10.1%", "assets/bleue dry.png", 0.101, 1180),
   DrinkData("Quillosa", "assets/quillosa.png", 0.101/2, 1180),
@@ -41,6 +42,7 @@ const drinkDataList = {
   DrinkData("Chartreuse jaune", "assets/chartreuse.webp", 0.43, 750),
   DrinkData("Joint", "assets/joint.png", 0, 0)
 };
+*/
 
 class Consommation {
   final Duration timeConsumed;

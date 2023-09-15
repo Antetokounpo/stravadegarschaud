@@ -22,7 +22,10 @@ class BrosseAutosaver {
   }
 
   static Map<String, int> get drinkCounts {
-    final Map<String, dynamic> value = currentBrosseBox.get('drinkCounts', defaultValue: {for(final drink in drinkDataList) drink.name : 0});
+    // Empty map because we already check for null keys when we use it.
+    // On met '' en clé pour le type sinon ça marche pas. On l'enlève après, mais il y a sûrement un meilleur moyen de faire ça haha
+    Map<String, dynamic> value = currentBrosseBox.get('drinkCounts', defaultValue: {'': 0});
+    value.remove('');
 
     // On veut retourner Map<String, int> et non Map<String, dynamic>. Ça marche avec ce .map, mais je sais pas pourquoi
     return value.map((key, value) => MapEntry(key, value));
