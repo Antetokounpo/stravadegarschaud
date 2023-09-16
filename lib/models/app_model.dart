@@ -120,12 +120,21 @@ class AppModel extends ChangeNotifier {
   void setBloodAlcoholContent() {
     var firstSip = const Duration(); // première gorgée à 0 seconde
     var bac = 0.0;
+    var subbed = false;
+
     for(final conso in consommations) {
       var numerator = 0.806*conso.drink.inStandardDrinks;
       var denominator = 1.1*(drinker.sex == Sex.female ? 0.49 : 0.522)*drinker.weight;
+      var addTerm = numerator/denominator;
       var subTerm = 0.0017 * ((duration.inSeconds - firstSip.inSeconds) / 3600.0 + 0.03*(duration.inSeconds - conso.timeConsumed.inSeconds) / 3600.0);
 
-      bac += numerator/denominator - subTerm;
+      if (subTerm < addTerm) {
+        bac += addTerm;
+      } 
+      if (!subbed) {
+        bac -= subTerm;
+        subbed = true;
+      }
 
       firstSip = conso.timeConsumed;
     }
