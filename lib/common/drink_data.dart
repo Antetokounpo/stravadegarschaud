@@ -26,6 +26,15 @@ class DrinkData {
   };
 }
 
+const drinkTypeImagePath = {
+  'Bière': "assets/beer.png",
+  'Vin': "assets/vin.png",
+  'Cocktail': "assets/cocktail.png",
+  'Shot': "assets/shot.png",
+  'Sangria': "assets/sangria.png",
+  'Autre': "assets/iceberg.png",
+};
+
 /*
 const drinkDataList = {
   DrinkData("Bleue Dry 10.1%", "assets/bleue dry.png", 0.101, 1180),

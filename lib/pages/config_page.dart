@@ -109,12 +109,14 @@ class AddDrinkForm extends StatefulWidget {
     required this.name,
     required this.volume,
     required this.abv,
+    required this.imagePath,
     this.modifyIndex,
   });
 
   final String name;
   final String volume;
   final String abv;
+  final String imagePath;
 
   final int? modifyIndex;
 
@@ -129,12 +131,14 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
   TextEditingController? nameController;
   TextEditingController? volumeController;
   TextEditingController? abvController;
+  TextEditingController? drinkTypeController;
 
   @override
   void dispose() {
     nameController?.dispose();
     volumeController?.dispose();
     abvController?.dispose();
+    drinkTypeController?.dispose();
 
     super.dispose();
   }
@@ -144,6 +148,7 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
     nameController = TextEditingController(text: widget.name);
     volumeController = TextEditingController(text: widget.volume);
     abvController = TextEditingController(text: widget.abv);
+    drinkTypeController = TextEditingController();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -190,7 +195,23 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
               controller: abvController,
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 32.0),
+              padding: const EdgeInsets.only(top: 10.0),
+              child: DropdownMenu(
+                controller: drinkTypeController,
+                label: const Text('Type de drink'),
+                initialSelection: widget.imagePath,
+                dropdownMenuEntries: [
+                  DropdownMenuEntry(value: drinkTypeImagePath['Bière'], label: "Bière"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Vin'], label: "Vin"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Cocktail'], label: "Cocktail"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Shot'], label: "Shot"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Sangria'], label: "Sangria"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Autre'], label: "Autre"),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
               child: Row(
                 children: [
                   TextButton(
@@ -206,10 +227,11 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
                         String name = nameController!.text;
                         double volume = double.parse(volumeController!.text);
                         double abv = double.parse(abvController!.text) / 100.0;
-                
+                        String imagePath = drinkTypeImagePath[drinkTypeController!.text]!;
+
                         var appModel = context.read<AppModel>();
 
-                        var drink = DrinkData(name, "assets/iceberg.png", abv, volume);
+                        var drink = DrinkData(name, imagePath, abv, volume);
                         if(widget.modifyIndex == null) {
                           appModel.addDrink(drink);
                         } else {
@@ -230,7 +252,7 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
   }
 }
 
-void showAddDrinkDialog(BuildContext context, {name = "", volume = "", abv = "", modifyIndex}) {
+void showAddDrinkDialog(BuildContext context, {name = "", volume = "", abv = "", imagePath = "assets/iceberg.png", modifyIndex}) {
 
   final dialog = StatefulBuilder(
     builder: ((context, setState) {
@@ -238,7 +260,7 @@ void showAddDrinkDialog(BuildContext context, {name = "", volume = "", abv = "",
       return SimpleDialog(
         title: const Text("Ajouter nouveau drink",),
         children: [
-          AddDrinkForm(name: name, volume: volume.toString(), abv: (abv*100).toString(), modifyIndex: modifyIndex),
+          AddDrinkForm(name: name, volume: volume.toString(), abv: (abv*100).toString(), imagePath: imagePath, modifyIndex: modifyIndex),
         ],
       );
     })
@@ -286,8 +308,9 @@ class ConsosList extends StatelessWidget {
                     final name = drinkDataList[index].name;
                     final volume = drinkDataList[index].volume;
                     final abv = drinkDataList[index].abv;
+                    final imagePath = drinkDataList[index].imagePath;
 
-                    showAddDrinkDialog(context, name: name, volume: volume, abv: abv, modifyIndex: index);
+                    showAddDrinkDialog(context, name: name, volume: volume, abv: abv, imagePath: imagePath, modifyIndex: index);
                   },
                   child: const Icon(Icons.edit),
                 )
