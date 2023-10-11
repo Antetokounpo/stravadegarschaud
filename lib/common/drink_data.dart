@@ -6,7 +6,7 @@ class DrinkData {
   final double volume;
 
   double get inStandardDrinks {
-    return volume*abv / 17.7; // Standard drink is 17.7 ml in the US
+    return volume*abv / 15.0; // Standard drink is 17.7 ml in the US, 15 ml in most other countries
   }
 
   const DrinkData(this.name, this.imagePath, this.abv, this.volume);

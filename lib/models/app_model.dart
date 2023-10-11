@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -116,16 +117,26 @@ class AppModel extends ChangeNotifier {
   }
 
   var bloodAlcoholContent = 0.0;
+  static const metabolicRate = 0.017; // g/100ml per hour
 
   void setBloodAlcoholContent() {
+    if(consommations.isEmpty) {
+      bloodAlcoholContent = 0.0;
+      return;
+    }
+
     var bac = 0.0;
     var subbed = false;
 
+    var metabolicStartTime = 0.0;
     for(final conso in consommations) {
+      // La métabolisation commence lorsqu'on consomme l'alcool ou lorsque qu'on a fini de métaboliser l'alcool consommé antérieurement
+      metabolicStartTime = max(conso.timeConsumed.inSeconds.toDouble(), metabolicStartTime);
+
       var numerator = 0.806*conso.drink.inStandardDrinks;
       var denominator = 1.1*(drinker.sex == Sex.female ? 0.49 : 0.522)*drinker.weight;
       var addTerm = numerator/denominator;
-      var subTerm = 0.0017 * (duration.inSeconds - conso.timeConsumed.inSeconds) / 3600.0;
+      var subTerm = metabolicRate * (duration.inSeconds - metabolicStartTime) / 3600.0;
 
       if (subTerm < addTerm) {
         bac += addTerm;
@@ -133,7 +144,9 @@ class AppModel extends ChangeNotifier {
           bac -= subTerm;
           subbed = true;
         }
-      } 
+      }
+
+      metabolicStartTime = (addTerm / metabolicRate * 3600.0 + metabolicStartTime);
     }
 
     bloodAlcoholContent = bac;
