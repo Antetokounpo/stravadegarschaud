@@ -75,20 +75,51 @@ enum Sex {
   female
 }
 
+enum WeightUnit {
+  kg,
+  lbs
+}
+
+class Weight {
+  final WeightUnit unit;
+  final int weight;
+
+  const Weight(this.weight, [this.unit = WeightUnit.kg]);
+
+  Map<String, dynamic> toJson() => {
+    'unit': unit.index,
+    'weight': weight
+  };
+
+  factory Weight.fromJson(Map<String, dynamic> json) => Weight(
+    json['weight'] as int,
+    WeightUnit.values[json['unit'] as int]
+  );
+
+  int get kilograms {
+    if(unit == WeightUnit.lbs) {
+      return (0.453592*weight).round();
+    }
+
+    return weight;
+  }
+
+}
+
 class Drinker {
   final Sex sex;
-  final int weight;
+  final Weight weight;
 
   const Drinker(this.sex, this.weight);
 
   Map<String, dynamic> toJson() => {
     'sex': sex == Sex.male,
-    'weight': weight
+    'weight': weight.toJson()
   };
 
   factory Drinker.fromJson(Map<String, dynamic> json) => Drinker(
     json['sex'] ? Sex.male : Sex.female,
-    json['weight'] as int,
+    Weight.fromJson(json['weight']),
   );
 }
 

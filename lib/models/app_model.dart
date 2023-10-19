@@ -134,7 +134,7 @@ class AppModel extends ChangeNotifier {
       metabolicStartTime = max(conso.timeConsumed.inSeconds.toDouble(), metabolicStartTime);
 
       var numerator = 0.806*conso.drink.inStandardDrinks;
-      var denominator = 1.1*(drinker.sex == Sex.female ? 0.49 : 0.522)*drinker.weight;
+      var denominator = 1.1*(drinker.sex == Sex.female ? 0.49 : 0.522)*drinker.weight.kilograms;
       var addTerm = numerator/denominator;
       var subTerm = metabolicRate * (duration.inSeconds - metabolicStartTime) / 3600.0;
 
@@ -152,7 +152,7 @@ class AppModel extends ChangeNotifier {
     bloodAlcoholContent = bac;
   }
 
-  Drinker get drinker => Drinker.fromJson(configBox.get('drinker', defaultValue: const Drinker(Sex.male, 0).toJson()));
+  Drinker get drinker => Drinker.fromJson(configBox.get('drinker', defaultValue: const Drinker(Sex.male, Weight(0)).toJson()));
   
   void setSex(Sex sex) {
     configBox['drinker'] = Drinker(sex, drinker.weight);
@@ -160,7 +160,7 @@ class AppModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setWeight(int weight) {
+  void setWeight(Weight weight) {
     configBox['drinker'] = Drinker(drinker.sex, weight);
     setBloodAlcoholContent();
     notifyListeners();

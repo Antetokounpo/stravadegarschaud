@@ -52,24 +52,46 @@ class SexSelector extends StatelessWidget {
 }
 
 class WeightSetter extends StatelessWidget {
+  static const entries = [
+    DropdownMenuEntry(value: WeightUnit.kg, label: "kg"),
+    DropdownMenuEntry(value: WeightUnit.lbs, label: "lbs"),
+  ];
+
   @override
   Widget build(BuildContext context) {
     var config = context.watch<AppModel>();
 
-    return SizedBox(
-      width: 170,
-      child: TextFormField(
-        decoration: const InputDecoration(
-          labelText: "Poids (kg)"
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 150,
+          child: TextFormField(
+            decoration: const InputDecoration(
+              labelText: "Poids"
+            ),
+            onChanged: ((value) {
+              try {
+                config.setWeight(Weight(int.parse(value), config.drinker.weight.unit));
+              } catch (e) {} // If invalid value, just don't save it
+            }),
+            keyboardType: TextInputType.number,
+            initialValue: config.drinker.weight.weight.toString(),
+          ),
         ),
-        onChanged: ((value) {
-          try {
-            config.setWeight(int.parse(value));
-          } catch (e) {} // If invalid value, just don't save it
-        }),
-        keyboardType: TextInputType.number,
-        initialValue: config.drinker.weight.toString(),
-      ),
+        const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+        DropdownMenu<WeightUnit>(
+          width: 100.0,
+          initialSelection: config.drinker.weight.unit,
+          dropdownMenuEntries: entries, 
+          label: const Text("Unité"),
+          onSelected: (value) {
+            if (value != null) {
+              config.setWeight(Weight(config.drinker.weight.weight, value));
+            }
+          },
+        ),
+      ],
     );
   }
 }
