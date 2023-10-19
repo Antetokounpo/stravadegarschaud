@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:stravadegarschaud/pages/config_page.dart';
 
 import '../common/drink_data.dart';
 import '../models/app_model.dart';
@@ -305,17 +306,20 @@ void showModifyDialog(BuildContext context) {
 class DrinkList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    var drinkDataList = context.select<AppModel, List<DrinkData>>((model) => model.drinkDataList);
+    var drinkDataList = context.watch<AppModel>().drinkDataList;
 
     return SizedBox(
       height: 250.0,
       child: ListView.separated(
-        itemCount: drinkDataList.length,
+        itemCount: drinkDataList.length+1, // Plus one for the AddDrinkTile
         scrollDirection: Axis.horizontal,
-        itemBuilder: (BuildContext context, int index) => DrinkTile(
-          drink: drinkDataList.elementAt(index),
-        ),
+        itemBuilder: (BuildContext context, int index) {
+          if(index == drinkDataList.length) {
+            return AddDrinkTile();
+          }
+
+          return DrinkTile(drink: drinkDataList.elementAt(index));
+        },
         separatorBuilder: (BuildContext context, int index) => const SizedBox(
           width: 6.0,
         ),
@@ -366,6 +370,34 @@ class DrinkTile extends StatelessWidget {
             ],
           ),
         )
+    );
+  }
+}
+
+// DRY, DrinkTile et AddDrinkTile se répètent. Peut-être à recoder pour les mettre ensemble.
+class AddDrinkTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 200.0,
+      child: ElevatedButton(
+        onPressed: () {
+          showAddDrinkDialog(context);
+        },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.all(5.0),
+        ),
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Ajouter drink", style: TextStyle(fontSize: 18.0)),
+            Icon(Icons.add, size: 75.0),
+          ],
+        ),
+      ),
     );
   }
 }
