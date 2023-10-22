@@ -39,6 +39,7 @@ class SexSelector extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: DropdownMenu<Sex>(
+        width: 200,
         initialSelection: config.drinker.sex,
         dropdownMenuEntries: entries,
         label: const Text("Sexe"),
@@ -65,7 +66,7 @@ class WeightSetter extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          width: 150,
+          width: 90,
           child: TextFormField(
             decoration: const InputDecoration(
               labelText: "Poids"
@@ -146,6 +147,7 @@ class AddDrinkForm extends StatefulWidget {
   State<AddDrinkForm> createState() => _AddDrinkFormState();
 }
 
+// C'est pas le meilleur Form qu'on a vu... Ça serait à retravailler éventuellement
 class _AddDrinkFormState extends State<AddDrinkForm> {
 
   final _formKey = GlobalKey<FormState>();
@@ -154,6 +156,8 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
   TextEditingController? volumeController;
   TextEditingController? abvController;
   TextEditingController? drinkTypeController;
+
+  final volumeEntries = [for (var entry in drinkVolumes.entries) DropdownMenuEntry(value: entry.value, label: entry.key)]; // Ça pourrait probablement être const
 
   @override
   void dispose() {
@@ -178,6 +182,30 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
         key: _formKey,
         child: Column(
           children: [
+            DropdownMenu(
+              initialSelection: volumeEntries.last,
+              dropdownMenuEntries: volumeEntries,
+              label: const Text("Format"),
+              onSelected: (value) {
+                volumeController!.value = TextEditingValue(text: value.toString());
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: DropdownMenu(
+                controller: drinkTypeController,
+                label: const Text('Type de drink'),
+                initialSelection: widget.imagePath,
+                dropdownMenuEntries: [
+                  DropdownMenuEntry(value: drinkTypeImagePath['Bière'], label: "Bière"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Vin'], label: "Vin"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Cocktail'], label: "Cocktail"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Shot'], label: "Shot"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Sangria'], label: "Sangria"),
+                  DropdownMenuEntry(value: drinkTypeImagePath['Autre'], label: "Autre"),
+                ],
+              ),
+            ),
             TextFormField(
               decoration: const InputDecoration(
                 labelText: "Nom du drink",
@@ -215,22 +243,6 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
               },
               keyboardType: TextInputType.number,
               controller: abvController,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: DropdownMenu(
-                controller: drinkTypeController,
-                label: const Text('Type de drink'),
-                initialSelection: widget.imagePath,
-                dropdownMenuEntries: [
-                  DropdownMenuEntry(value: drinkTypeImagePath['Bière'], label: "Bière"),
-                  DropdownMenuEntry(value: drinkTypeImagePath['Vin'], label: "Vin"),
-                  DropdownMenuEntry(value: drinkTypeImagePath['Cocktail'], label: "Cocktail"),
-                  DropdownMenuEntry(value: drinkTypeImagePath['Shot'], label: "Shot"),
-                  DropdownMenuEntry(value: drinkTypeImagePath['Sangria'], label: "Sangria"),
-                  DropdownMenuEntry(value: drinkTypeImagePath['Autre'], label: "Autre"),
-                ],
-              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),

@@ -35,6 +35,12 @@ const drinkTypeImagePath = {
   'Autre': "assets/iceberg.png",
 };
 
+const drinkVolumes = {
+  'Pinte': "568",
+  'Shot': "30",
+  'Verre': "341"
+};
+
 /*
 const drinkDataList = {
   DrinkData("Bleue Dry 10.1%", "assets/bleue dry.png", 0.101, 1180),
