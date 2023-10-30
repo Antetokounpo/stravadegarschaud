@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  desktop_webview_auth
   isar_flutter_libs
   url_launcher_linux
 )
