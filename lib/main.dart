@@ -1,9 +1,11 @@
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:stravadegarschaud/pages/auth_gate_page.dart';
 import 'firebase_options.dart';
 
 import 'pages/home_page.dart';
@@ -19,6 +21,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseUIAuth.configureProviders([
+    EmailAuthProvider()
+  ]);
 
   runApp(const MyApp());
 }
@@ -43,7 +48,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
           useMaterial3: true,
         ),
-        home: HomePage(),
+        home: const AuthGate(), // Go to AuthGate to verify if user is logged in or not
       ),
     );
   }
