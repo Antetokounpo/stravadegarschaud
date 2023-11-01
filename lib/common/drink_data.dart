@@ -132,17 +132,23 @@ class Drinker {
 class Brosse {
   final Drinker drinker;
   final List<Consommation> consommations;
+  final DateTime timeStarted;
+  final Duration duration;
 
-  const Brosse({required this.drinker, required this.consommations});
+  const Brosse({required this.drinker, required this.consommations, required this.timeStarted, required this.duration});
 
 
   Map<String, dynamic> toJson() => {
     'drinker': drinker.toJson(),
     'consommations': consommations.map((e) => e.toJson()).toList(),
+    'timeStarted': timeStarted.millisecondsSinceEpoch,
+    'duration': duration.inMilliseconds,
   };
 
   factory Brosse.fromJson(Map<String, dynamic> json) => Brosse(
     drinker: Drinker.fromJson(json['drinker']),
-    consommations: json['consommations'].map((e) => Consommation.fromJson(e)).toList()
+    consommations: json['consommations'].map((e) => Consommation.fromJson(e)).toList(),
+    timeStarted: DateTime.fromMillisecondsSinceEpoch(json['timeStarted']),
+    duration: Duration(milliseconds: json['duration'])
   );
 }

@@ -72,7 +72,7 @@ class AppModel extends ChangeNotifier {
 
   void saveBrosse() {
     brossesBox.add(
-      Brosse(drinker: drinker, consommations: consommations).toJson()
+      Brosse(drinker: drinker, consommations: consommations, timeStarted: DateTime.now().subtract(duration), duration: duration).toJson()
     );
 
     final brosses = brossesBox.getRange(0, brossesBox.length); // getAll marchait pas je crois
