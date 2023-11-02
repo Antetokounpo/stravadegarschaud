@@ -147,7 +147,7 @@ class Brosse {
 
   factory Brosse.fromJson(Map<String, dynamic> json) => Brosse(
     drinker: Drinker.fromJson(json['drinker']),
-    consommations: json['consommations'].map((e) => Consommation.fromJson(e)).toList(),
+    consommations: json['consommations'].map<Consommation>((e) => Consommation.fromJson(e)).toList(),
     timeStarted: DateTime.fromMillisecondsSinceEpoch(json['timeStarted']),
     duration: Duration(milliseconds: json['duration'])
   );

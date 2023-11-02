@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:stravadegarschaud/pages/auth_gate_page.dart';
 import 'firebase_options.dart';
 
-import 'pages/home_page.dart';
 import 'models/app_model.dart';
 import 'common/brosse_autosaver.dart';
 
@@ -24,6 +24,8 @@ void main() async {
   FirebaseUIAuth.configureProviders([
     EmailAuthProvider()
   ]);
+
+  initializeDateFormatting();
 
   runApp(const MyApp());
 }
