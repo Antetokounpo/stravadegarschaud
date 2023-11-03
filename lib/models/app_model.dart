@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:share_plus/share_plus.dart';
@@ -71,9 +73,16 @@ class AppModel extends ChangeNotifier {
   }
 
   void saveBrosse() {
+    final brosse = Brosse(drinker: drinker, consommations: consommations, timeStarted: DateTime.now().subtract(duration), duration: duration);
     brossesBox.add(
-      Brosse(drinker: drinker, consommations: consommations, timeStarted: DateTime.now().subtract(duration), duration: duration).toJson()
+      brosse.toJson()
     );
+
+    // Temporaire, seulement pour tester Firestore
+    var db = FirebaseFirestore.instance;
+    var auth = FirebaseAuth.instance;
+
+    db.collection(auth.currentUser!.uid).add(brosse.toJson());
 
     final brosses = brossesBox.getRange(0, brossesBox.length); // getAll marchait pas je crois
     Share.share(json.encode(brosses));

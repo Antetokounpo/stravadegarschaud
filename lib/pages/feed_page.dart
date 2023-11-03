@@ -1,6 +1,7 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
 import 'package:stravadegarschaud/common/drink_data.dart';
@@ -146,25 +147,51 @@ class ActivityFeedCard extends StatelessWidget {
 }
 
 
-class FeedPage extends StatelessWidget {
-  const FeedPage({
-    super.key
-  });
+class FeedPage extends StatefulWidget {
+  const FeedPage({super.key});
+
+  @override
+  State<FeedPage> createState() => _FeedPageState();
+}
+
+class _FeedPageState extends State<FeedPage> {
+
+  final activities = FirebaseFirestore.instance.collection(FirebaseAuth.instance.currentUser!.uid).get();
 
   @override
   Widget build(BuildContext context) {
-    final brossesBox = Hive.box(name: 'brosses');
-    final activity = Brosse.fromJson(brossesBox.getAt(0));
-
-
     return Scaffold(
       body: SafeArea(
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            return ActivityFeedCard(activity: activity,);            
-          },
+        child: FutureBuilder(
+          future: activities,
+          builder: ((context, snapshot) {
+            if(snapshot.hasData) {
+
+              final docs = snapshot.data!.docs;
+
+              return ListView.builder(
+                itemCount: docs.length,
+                itemBuilder: (context, index) => 
+                  ActivityFeedCard(activity: Brosse.fromJson(docs[index].data())),
+              );
+            } else if(snapshot.hasError) {
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 100, color: Colors.red,),
+                    Text("Erreur lors de la récupération des données de brosses")
+                  ],
+                ),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
         ),
-      ),
+      )
     );
   }
 }
