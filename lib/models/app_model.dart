@@ -2,18 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:stravadegarschaud/common/brosse_autosaver.dart';
 
+import 'package:stravadegarschaud/common/brosse_autosaver.dart';
+import 'package:stravadegarschaud/common/db_commands.dart';
 import '../common/drink_data.dart';
 
 
 class AppModel extends ChangeNotifier {
-  final brossesBox = Hive.box(name: 'brosses');
+  //final brossesBox = Hive.box(name: 'brosses');
   final configBox = Hive.box(name: 'config');
   final consosBox = Hive.box(name: 'consos');
   final currentBrosseBox = BrosseAutosaver.currentBrosseBox;
@@ -74,18 +73,11 @@ class AppModel extends ChangeNotifier {
 
   void saveBrosse() {
     final brosse = Brosse(drinker: drinker, consommations: consommations, timeStarted: DateTime.now().subtract(duration), duration: duration);
-    brossesBox.add(
-      brosse.toJson()
-    );
+    //brossesBox.add(
+    //  brosse.toJson()
+    //);
 
-    // Temporaire, seulement pour tester Firestore
-    var db = FirebaseFirestore.instance;
-    var auth = FirebaseAuth.instance;
-
-    db.collection(auth.currentUser!.uid).add(brosse.toJson());
-
-    final brosses = brossesBox.getRange(0, brossesBox.length); // getAll marchait pas je crois
-    Share.share(json.encode(brosses));
+    Database.addBrosse(brosse);
   }
 
   void autoSaveBrosse() {

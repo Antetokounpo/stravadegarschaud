@@ -1,9 +1,7 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:stravadegarschaud/common/db_commands.dart';
 import 'package:stravadegarschaud/common/drink_data.dart';
 
 class FeedCardHeader extends StatelessWidget {
@@ -156,7 +154,7 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
 
-  final activities = FirebaseFirestore.instance.collection(FirebaseAuth.instance.currentUser!.uid).get();
+  final Future<List<Brosse>> activities = Database.getBrossesForUser(Database.auth().currentUser!.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -166,13 +164,11 @@ class _FeedPageState extends State<FeedPage> {
           future: activities,
           builder: ((context, snapshot) {
             if(snapshot.hasData) {
-
-              final docs = snapshot.data!.docs;
-
+              final List<Brosse> brosses = snapshot.data!;
               return ListView.builder(
-                itemCount: docs.length,
+                itemCount: brosses.length,
                 itemBuilder: (context, index) => 
-                  ActivityFeedCard(activity: Brosse.fromJson(docs[index].data())),
+                  ActivityFeedCard(activity: brosses[index]),
               );
             } else if(snapshot.hasError) {
               return const Center(
