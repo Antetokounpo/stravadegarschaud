@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:stravadegarschaud/common/bac.dart';
 
 import 'package:stravadegarschaud/common/brosse_autosaver.dart';
 import 'package:stravadegarschaud/common/db_commands.dart';
@@ -126,31 +124,7 @@ class AppModel extends ChangeNotifier {
       return;
     }
 
-    var bac = 0.0;
-    var subbed = false;
-
-    var metabolicStartTime = 0.0;
-    for(final conso in consommations) {
-      // La métabolisation commence lorsqu'on consomme l'alcool ou lorsque qu'on a fini de métaboliser l'alcool consommé antérieurement
-      metabolicStartTime = max(conso.timeConsumed.inSeconds.toDouble(), metabolicStartTime);
-
-      var numerator = 0.806*conso.drink.inStandardDrinks;
-      var denominator = 1.1*(drinker.sex == Sex.female ? 0.49 : 0.522)*drinker.weight.kilograms;
-      var addTerm = numerator/denominator;
-      var subTerm = metabolicRate * (duration.inSeconds - metabolicStartTime) / 3600.0;
-
-      if (subTerm < addTerm) {
-        bac += addTerm;
-        if (!subbed) {
-          bac -= subTerm;
-          subbed = true;
-        }
-      }
-
-      metabolicStartTime = (addTerm / metabolicRate * 3600.0 + metabolicStartTime);
-    }
-
-    bloodAlcoholContent = bac;
+    bloodAlcoholContent = BAC(drinker: drinker, consommations: consommations).getAlcoholContent(duration);
   }
 
   Drinker get drinker => Drinker.fromJson(configBox.get('drinker', defaultValue: const Drinker(Sex.male, Weight(0)).toJson()));
