@@ -17,4 +17,10 @@ class Database {
 
     return brosses;
   }
+
+  static Future<List<Brosse>> getBrossesForSetOfUsers(List<String> uids) {
+    var listOfBrosses = [for (var uid in uids) getBrossesForUser(uid)];
+
+    return Future.wait(listOfBrosses).then((listOfLists) => listOfLists.reduce((value, element) => value + element));
+  }
 }
