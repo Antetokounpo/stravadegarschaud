@@ -75,7 +75,7 @@ class AppModel extends ChangeNotifier {
     //  brosse.toJson()
     //);
 
-    Database.addBrosse(brosse);
+    Database.addBrosse(brosse, Database.auth.currentUser!.uid);
   }
 
   void autoSaveBrosse() {

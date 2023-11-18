@@ -209,7 +209,7 @@ class AlcoholGraph extends StatelessWidget {
 
 class ActivityFeedCard extends StatelessWidget {
 
-  final Brosse activity;
+  final Activity activity;
   static const brosseSynonymes = ["Brosse", "Débauche", "Dévergondage", "Beuverie", "Bombance", "Ripaille", "Ribouldingue"];
 
   ActivityFeedCard({required this.activity});
@@ -219,8 +219,8 @@ class ActivityFeedCard extends StatelessWidget {
 
     final theme = Theme.of(context);
 
-    final bac = BAC(drinker: activity.drinker, consommations: activity.consommations);
-    final bacOverTime = [for (var i = 0; i<activity.duration.inMinutes+1; ++i)  bac.getAlcoholContent(Duration(minutes: i))];
+    final bac = BAC(drinker: activity.brosse.drinker, consommations: activity.brosse.consommations);
+    final bacOverTime = [for (var i = 0; i<activity.brosse.duration.inMinutes+1; ++i)  bac.getAlcoholContent(Duration(minutes: i))];
   
     return Container(
       decoration: const BoxDecoration(
@@ -233,7 +233,16 @@ class ActivityFeedCard extends StatelessWidget {
           height: 400,
           child: Column(
             children: [
-              FeedCardHeader(timeStarted: activity.timeStarted, username: Database.auth().currentUser!.displayName!),
+              FutureBuilder(
+                future: Database.getDisplayName(activity.userId), 
+                builder: (context, snapshot) {
+                  if(snapshot.hasData) {
+                    return FeedCardHeader(timeStarted: activity.brosse.timeStarted, username: snapshot.data!);
+                  } else {
+                    return FeedCardHeader(timeStarted: activity.brosse.timeStarted, username: "Anonyme");
+                  }
+                }
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
                 // TODO: Ajouter possibilité de choisir le titre
@@ -243,10 +252,10 @@ class ActivityFeedCard extends StatelessWidget {
                 ),
               ),
               FeedCardStats(
-                consosCount: activity.consommations.length,
+                consosCount: activity.brosse.consommations.length,
                 maxBAC: bacOverTime.reduce(max),
                 avgBAC: bacOverTime.average,
-                duration: activity.duration,
+                duration: activity.brosse.duration,
               ),
               AlcoholGraph(bacOverTime: bacOverTime), 
               FeedCartButtons(),
@@ -268,7 +277,7 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
 
-  final Future<List<Brosse>> activities = Database.getBrossesForUser(Database.auth().currentUser!.uid);
+  final Future<List<Activity>> activities = Database.getAllUsersIds().then((uids) => Database.getBrossesForSetOfUsers(uids));
 
   @override
   Widget build(BuildContext context) {
@@ -279,8 +288,8 @@ class _FeedPageState extends State<FeedPage> {
           future: activities,
           builder: ((context, snapshot) {
             if(snapshot.hasData) {
-              final List<Brosse> brosses = snapshot.data!;
-              brosses.sort((a, b) => b.timeStarted.compareTo(a.timeStarted)); // Last one first
+              final List<Activity> brosses = snapshot.data!;
+              brosses.sort((a, b) => b.brosse.timeStarted.compareTo(a.brosse.timeStarted)); // Last one first
               return ListView.builder(
                 itemCount: brosses.length,
                 itemBuilder: (context, index) => 

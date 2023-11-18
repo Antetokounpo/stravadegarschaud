@@ -152,3 +152,21 @@ class Brosse {
     duration: Duration(milliseconds: json['duration'])
   );
 }
+
+// This goes directly to Firestore
+class Activity {
+  final Brosse brosse;
+  final String userId;
+
+  const Activity({required this.brosse, required this.userId});
+
+  Map<String, dynamic> toJson() => {
+    'brosse' : brosse.toJson(),
+    'userId' : userId
+  };
+
+  factory Activity.fromJson(Map<String, dynamic> json) => Activity(
+    brosse: Brosse.fromJson(json['brosse']),
+    userId: json['userId']
+  );
+}
