@@ -197,7 +197,7 @@ class AlcoholGraph extends StatelessWidget {
                    lineBarsData: [
                      LineChartBarData(
                       dotData: const FlDotData(show: false),
-                      spots: [for (var i = 0; i<bacOverTime.length; ++i) FlSpot(i.toDouble(), double.parse(bacOverTime[i].toStringAsFixed(2)))]
+                      spots: [for (var i = 0; i<bacOverTime.length; ++i) FlSpot(i.toDouble(), double.parse(bacOverTime[i].toStringAsFixed(3)))]
                      )
                    ]
                  )

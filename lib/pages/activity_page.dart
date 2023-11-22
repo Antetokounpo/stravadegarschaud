@@ -14,17 +14,12 @@ class ActivityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return WillPopScope(
-      onWillPop: () async { // This disables the going back button
-        return false;
-      },
-      child: Scaffold(
-          body: SafeArea(
-          child: Center(
-            child: PageLayout(),
-          ),
-        )
-      ),
+    return Scaffold(
+        body: SafeArea(
+        child: Center(
+          child: PageLayout(),
+        ),
+      )
     );
   }
 }
@@ -211,7 +206,7 @@ class BACCard extends StatelessWidget {
   }
 
   String getBAC(double bac) {
-    var f = NumberFormat("0.00", "fr_CA");
+    var f = NumberFormat("0.000", "fr_CA");
 
     return f.format(bac);
   }
