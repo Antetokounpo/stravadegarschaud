@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:stravadegarschaud/pages/config_page.dart';
+import 'package:stravadegarschaud/pages/save_activity_page.dart';
 
 import '../common/drink_data.dart';
 import '../models/app_model.dart';
@@ -150,6 +151,7 @@ void showStopConfirmationDialog(BuildContext context, void Function() callback) 
     onPressed: (() {
       callback();
       Navigator.of(context).pop();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const SaveActivityPage()));
     }),
     child: const Text("Arrêter brosse"),
   );

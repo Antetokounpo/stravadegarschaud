@@ -210,7 +210,7 @@ class AlcoholGraph extends StatelessWidget {
 class ActivityFeedCard extends StatelessWidget {
 
   final Activity activity;
-  static const brosseSynonymes = ["Brosse", "Débauche", "Dévergondage", "Beuverie", "Bombance", "Ripaille", "Ribouldingue"];
+  //static const brosseSynonymes = ["Brosse", "Débauche", "Dévergondage", "Beuverie", "Bombance", "Ripaille", "Ribouldingue"];
 
   ActivityFeedCard({required this.activity});
 
@@ -245,10 +245,9 @@ class ActivityFeedCard extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
-                // TODO: Ajouter possibilité de choisir le titre
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(brosseSynonymes[Random().nextInt(brosseSynonymes.length-1)], style: theme.textTheme.titleLarge,),
+                  child: Text(activity.title, style: theme.textTheme.titleLarge,),
                 ),
               ),
               FeedCardStats(

@@ -7,6 +7,8 @@ import 'package:stravadegarschaud/pages/config_page.dart';
 import 'package:stravadegarschaud/pages/feed_page.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<HomePage> createState() => _HomePageState();
 }

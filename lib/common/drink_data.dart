@@ -157,16 +157,19 @@ class Brosse {
 class Activity {
   final Brosse brosse;
   final String userId;
+  final String title;
 
-  const Activity({required this.brosse, required this.userId});
+  const Activity({required this.brosse, required this.userId, required this.title});
 
   Map<String, dynamic> toJson() => {
     'brosse' : brosse.toJson(),
-    'userId' : userId
+    'userId' : userId,
+    'title' : title
   };
 
   factory Activity.fromJson(Map<String, dynamic> json) => Activity(
     brosse: Brosse.fromJson(json['brosse']),
-    userId: json['userId']
+    userId: json['userId'],
+    title: json['title']
   );
 }

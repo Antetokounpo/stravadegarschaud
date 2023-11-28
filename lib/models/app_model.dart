@@ -10,7 +10,6 @@ import '../common/drink_data.dart';
 
 
 class AppModel extends ChangeNotifier {
-  //final brossesBox = Hive.box(name: 'brosses');
   final configBox = Hive.box(name: 'config');
   final consosBox = Hive.box(name: 'consos');
   final currentBrosseBox = BrosseAutosaver.currentBrosseBox;
@@ -27,13 +26,18 @@ class AppModel extends ChangeNotifier {
       setBloodAlcoholContent();
     } else {
       stopTimer();
-      BrosseAutosaver.resetCurrentBrosse();
-      saveBrosse();
-      resetTimer();
-      resetConsommations();
+
+      //saveBrosse();
+      //resetActivity();
     }
 
     notifyListeners();
+  }
+
+  void resetActivity() {
+    BrosseAutosaver.resetCurrentBrosse();
+    resetTimer();
+    resetConsommations();
   }
 
   Duration duration = BrosseAutosaver.duration;
@@ -69,13 +73,10 @@ class AppModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveBrosse() {
+  void saveBrosse(String title) {
     final brosse = Brosse(drinker: drinker, consommations: consommations, timeStarted: DateTime.now().subtract(duration), duration: duration);
-    //brossesBox.add(
-    //  brosse.toJson()
-    //);
 
-    Database.addBrosse(brosse, Database.auth.currentUser!.uid);
+    Database.addBrosse(brosse, title, Database.auth.currentUser!.uid);
   }
 
   void autoSaveBrosse() {

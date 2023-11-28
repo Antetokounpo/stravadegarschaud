@@ -7,9 +7,9 @@ class Database {
   static FirebaseAuth get auth => FirebaseAuth.instance;
   static FirebaseFirestore get db => FirebaseFirestore.instance;
 
-  static void addBrosse(Brosse brosse, String uid) {
+  static void addBrosse(Brosse brosse, String title, String uid) {
     db.collection("brosses").add(
-      Activity(brosse: brosse, userId: uid).toJson()
+      Activity(brosse: brosse, userId: uid, title: title).toJson()
     );
   }
 

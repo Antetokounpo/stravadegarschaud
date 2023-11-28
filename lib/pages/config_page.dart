@@ -211,8 +211,9 @@ class _AddDrinkFormState extends State<AddDrinkForm> {
                 labelText: "Nom du drink",
               ),
               validator: (value) {
-                if(value == null || value.isEmpty)
+                if(value == null || value.isEmpty) {
                   return "Entrez un nom";
+                }
                 return null;
               },
               controller: nameController,
