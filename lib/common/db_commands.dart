@@ -61,4 +61,10 @@ class Database {
       (collection) => collection.docs.isNotEmpty
     );
   }
+
+  static Future<int> getLikeCount(String brosseId) {
+    return db.collection("pintes").where("brosseId", isEqualTo: brosseId).get().then(
+      (collection) => collection.docs.length
+    );
+  }
 }

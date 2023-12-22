@@ -163,12 +163,14 @@ class FeedCardButtons extends StatefulWidget {
 class _FeedCardButtonsState extends State<FeedCardButtons> {
   // Cette valeur a besoin d'être intialisé parce qu'elle ne peut être null
   Future<bool> _liked = Future.value(false);
+  Future<int> _likeCount = Future.value(0);
 
   // On regarde dans la DB si l'activité est déjà liké
   @override
   void initState() {
     super.initState();
     _liked = isAlreadyLiked();
+    _likeCount = Database.getLikeCount(widget.activityId);
   }
 
   Future<bool> isAlreadyLiked() {
@@ -183,6 +185,7 @@ class _FeedCardButtonsState extends State<FeedCardButtons> {
 
     setState(() {
       _liked = Future.value(true);
+      _likeCount = _likeCount.then((count) => count+1);
     });
   }
 
@@ -194,11 +197,14 @@ class _FeedCardButtonsState extends State<FeedCardButtons> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FutureBuilder(
-            future: _liked,
+            future: Future.wait([_liked, _likeCount]),
             builder: (context, snapshot) {
               if(snapshot.hasData) {
-                final icon = snapshot.data! ? const Icon(Icons.thumb_up) : const Icon(Icons.thumb_up_outlined);
-                return FeedCardSingleButton(icon: icon, callback: likeCallback);
+                final liked = snapshot.data![0] as bool; // _liked
+                final likeCount = snapshot.data![1] as int; // _likeCount
+
+                final icon = liked ? const Icon(Icons.thumb_up) : const Icon(Icons.thumb_up_outlined);
+                return FeedCardSingleButton(icon: icon, callback: likeCallback, number: likeCount.toString(),);
               } else {
                 return const FeedCardSingleButton(icon: Icon(Icons.thumb_up_outlined));
               }
