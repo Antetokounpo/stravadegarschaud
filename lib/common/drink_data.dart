@@ -158,18 +158,25 @@ class Activity {
   final Brosse brosse;
   final String userId;
   final String title;
+  final String activityId; // Same ID as the one on Firestore
 
-  const Activity({required this.brosse, required this.userId, required this.title});
+  const Activity({
+    required this.brosse,
+    required this.userId,
+    required this.title,
+    required this.activityId,
+  });
 
   Map<String, dynamic> toJson() => {
     'brosse' : brosse.toJson(),
     'userId' : userId,
-    'title' : title
+    'title' : title,
   };
 
   factory Activity.fromJson(Map<String, dynamic> json) => Activity(
     brosse: Brosse.fromJson(json['brosse']),
     userId: json['userId'],
-    title: json['title']
+    title: json['title'],
+    activityId: json['activityId'],
   );
 }

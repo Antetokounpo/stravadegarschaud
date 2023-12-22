@@ -8,9 +8,12 @@ class Database {
   static FirebaseFirestore get db => FirebaseFirestore.instance;
 
   static void addBrosse(Brosse brosse, String title, String uid) {
-    db.collection("brosses").add(
-      Activity(brosse: brosse, userId: uid, title: title).toJson()
+    final activityDocument = db.collection("brosses").add(
+      Activity(brosse: brosse, userId: uid, title: title, activityId: "").toJson()
     );
+
+    // Ligne pas très propre pour ajouter l'id du document le document lui-même
+    activityDocument.then((doc) => doc.set({'activityId' : doc.id}, SetOptions(merge: true)));
   }
 
   static Future<List<Activity>> getBrossesForUser(String uid) {
@@ -38,5 +41,24 @@ class Database {
 
   static Future<String> getDisplayName(String uid) {
     return db.collection("users").doc(uid).get().then((doc) => doc.data()!['displayName']);
+  }
+
+  static void likeActivity(String brosseId, String uid) {
+    isActivityLiked(brosseId, uid).then(
+      (liked) {
+        if (!liked) {
+          db.collection("pintes").add({
+            "brosseId": brosseId,
+            "userId": uid
+          });
+        }
+      }
+    );
+  }
+
+  static Future<bool> isActivityLiked(String brosseId, String uid) {
+    return db.collection("pintes").where("userId", isEqualTo: uid).where("brosseId", isEqualTo: brosseId).get().then(
+      (collection) => collection.docs.isNotEmpty
+    );
   }
 }

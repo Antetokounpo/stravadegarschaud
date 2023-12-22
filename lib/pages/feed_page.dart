@@ -116,19 +116,22 @@ class FeedCardSingleButton extends StatelessWidget {
 
   final Icon icon;
   final String? number;
+  final void Function()? callback;
 
   const FeedCardSingleButton({
     super.key,
     required this.icon,
     this.number,
+    this.callback,
   });
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextButton(
-        onPressed: () {},
+        onPressed: callback,
         child: Row(
           children: [
             icon,
@@ -140,21 +143,71 @@ class FeedCardSingleButton extends StatelessWidget {
   }
 }
 
-class FeedCartButtons extends StatelessWidget {
+class FeedCardButtons extends StatefulWidget {
   static const divider = SizedBox(height: 30, child: VerticalDivider());
+
+  final String activityId;
+
+  const FeedCardButtons({
+    super.key,
+    required this.activityId,
+  });
+
+  // not sure what I did there
+  static final currentUserId = Database.auth.currentUser!.uid;
+
+  @override
+  State<FeedCardButtons> createState() => _FeedCardButtonsState();
+}
+
+class _FeedCardButtonsState extends State<FeedCardButtons> {
+  // Cette valeur a besoin d'être intialisé parce qu'elle ne peut être null
+  Future<bool> _liked = Future.value(false);
+
+  // On regarde dans la DB si l'activité est déjà liké
+  @override
+  void initState() {
+    super.initState();
+    _liked = isAlreadyLiked();
+  }
+
+  Future<bool> isAlreadyLiked() {
+    return Database.isActivityLiked(widget.activityId, FeedCardButtons.currentUserId);
+  }
+
+  // Quand on like un post, on l'écrit sur la DB et on met l'état _liked à vrai pour update le bouton du UI.
+  // On prend pas la valeur de Firestore, pcq elle n'a pas le temps d'être update assez vite. On ne peut pas
+  // unlike de toute façon.
+  void likeCallback() {
+    Database.likeActivity(widget.activityId, FeedCardButtons.currentUserId);
+
+    setState(() {
+      _liked = Future.value(true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FeedCardSingleButton(icon: Icon(Icons.thumb_up)),
-          divider,
-          FeedCardSingleButton(icon: Icon(Icons.comment)),
-          divider,
-          FeedCardSingleButton(icon: Icon(Icons.share)),
+          FutureBuilder(
+            future: _liked,
+            builder: (context, snapshot) {
+              if(snapshot.hasData) {
+                final icon = snapshot.data! ? const Icon(Icons.thumb_up) : const Icon(Icons.thumb_up_outlined);
+                return FeedCardSingleButton(icon: icon, callback: likeCallback);
+              } else {
+                return const FeedCardSingleButton(icon: Icon(Icons.thumb_up_outlined));
+              }
+            }
+          ),
+          FeedCardButtons.divider,
+          const FeedCardSingleButton(icon: Icon(Icons.comment)),
+          FeedCardButtons.divider,
+          const FeedCardSingleButton(icon: Icon(Icons.share)),
         ],
       ),
     );
@@ -164,11 +217,31 @@ class FeedCartButtons extends StatelessWidget {
 class AlcoholGraph extends StatelessWidget {
 
   final List<double> bacOverTime;
+  final DateTime timeStarted;
 
   const AlcoholGraph({
     super.key,
-    required this.bacOverTime
+    required this.bacOverTime,
+    required this.timeStarted
   });
+
+  String convertMinuteToTime(double minutes) {
+    return DateFormat.Hm().format(timeStarted.add(Duration(minutes: minutes.floor())));
+  }
+
+  // Fonction utilisée pour convertir les valeurs de l'axe des x en heures et en minutes.
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontSize: 12,
+    );
+
+    Widget text = Text(convertMinuteToTime(value), style: style,);
+
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: text,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,18 +253,21 @@ class AlcoholGraph extends StatelessWidget {
                child: LineChart(
                  LineChartData(
                   minY: 0.0,
-                  maxY: 0.5,
+                  maxY: bacOverTime.reduce(max),
                   maxX: bacOverTime.length.toDouble()-1,
                   gridData: const FlGridData(show: false),
-                  titlesData: const FlTitlesData(
-                    topTitles: AxisTitles(
+                  titlesData: FlTitlesData(
+                    topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)
                     ),
-                    rightTitles: AxisTitles(
+                    rightTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)
                     ),
                     bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false) 
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: bottomTitleWidgets
+                      ) 
                     )
                   ),
                    lineBarsData: [
@@ -256,8 +332,8 @@ class ActivityFeedCard extends StatelessWidget {
                 avgBAC: bacOverTime.average,
                 duration: activity.brosse.duration,
               ),
-              AlcoholGraph(bacOverTime: bacOverTime), 
-              FeedCartButtons(),
+              AlcoholGraph(bacOverTime: bacOverTime, timeStarted: activity.brosse.timeStarted,), 
+              FeedCardButtons(activityId: activity.activityId),
             ]
           ),
         ),
