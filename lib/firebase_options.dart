@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -49,32 +46,42 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1068716969676',
     projectId: 'strava-de-gars-chaud',
     authDomain: 'strava-de-gars-chaud.firebaseapp.com',
-    storageBucket: 'strava-de-gars-chaud.appspot.com',
+    storageBucket: 'strava-de-gars-chaud.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD8xfQQnczMQHJdQrBIlN_WgHAjvI86e-Y',
-    appId: '1:1068716969676:android:e77a0b0c3a61f2fe3a3c69',
+    appId: '1:1068716969676:android:a620f70bc1bf060d3a3c69',
     messagingSenderId: '1068716969676',
     projectId: 'strava-de-gars-chaud',
-    storageBucket: 'strava-de-gars-chaud.appspot.com',
+    storageBucket: 'strava-de-gars-chaud.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAlyaSzrf8Dyye1yTr7Dlh9FeuKdlWxWnE',
-    appId: '1:1068716969676:ios:7aea2626cda6effb3a3c69',
+    appId: '1:1068716969676:ios:b3bb333bc4a48aef3a3c69',
     messagingSenderId: '1068716969676',
     projectId: 'strava-de-gars-chaud',
-    storageBucket: 'strava-de-gars-chaud.appspot.com',
-    iosBundleId: 'com.example.strava',
+    storageBucket: 'strava-de-gars-chaud.firebasestorage.app',
+    iosBundleId: 'com.example.stravaDeGarsChaudV2',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAlyaSzrf8Dyye1yTr7Dlh9FeuKdlWxWnE',
-    appId: '1:1068716969676:ios:869e7c0af8c2725b3a3c69',
+    appId: '1:1068716969676:ios:b3bb333bc4a48aef3a3c69',
     messagingSenderId: '1068716969676',
     projectId: 'strava-de-gars-chaud',
-    storageBucket: 'strava-de-gars-chaud.appspot.com',
-    iosBundleId: 'com.example.strava.RunnerTests',
+    storageBucket: 'strava-de-gars-chaud.firebasestorage.app',
+    iosBundleId: 'com.example.stravaDeGarsChaudV2',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBV-iKA25i-8S5kNT8mBou-CU9Nv4x3ATc',
+    appId: '1:1068716969676:web:edf913f0c70ab87d3a3c69',
+    messagingSenderId: '1068716969676',
+    projectId: 'strava-de-gars-chaud',
+    authDomain: 'strava-de-gars-chaud.firebaseapp.com',
+    storageBucket: 'strava-de-gars-chaud.firebasestorage.app',
+  );
+
 }

@@ -1,4 +1,4 @@
-# strava
+# strava_de_gars_chaud_v2
 
 A new Flutter project.
 

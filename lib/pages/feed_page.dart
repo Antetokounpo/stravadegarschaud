@@ -244,7 +244,7 @@ class AlcoholGraph extends StatelessWidget {
     Widget text = Text(convertMinuteToTime(value), style: style,);
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: text,
     );
   }

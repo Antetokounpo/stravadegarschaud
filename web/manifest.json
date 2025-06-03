@@ -1,6 +1,6 @@
 {
-    "name": "strava",
-    "short_name": "strava",
+    "name": "strava_de_gars_chaud_v2",
+    "short_name": "strava_de_gars_chaud_v2",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

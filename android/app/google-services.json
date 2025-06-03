@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "1068716969676",
     "project_id": "strava-de-gars-chaud",
-    "storage_bucket": "strava-de-gars-chaud.appspot.com"
+    "storage_bucket": "strava-de-gars-chaud.firebasestorage.app"
   },
   "client": [
     {
@@ -10,6 +10,25 @@
         "mobilesdk_app_id": "1:1068716969676:android:e77a0b0c3a61f2fe3a3c69",
         "android_client_info": {
           "package_name": "com.example.strava"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8xfQQnczMQHJdQrBIlN_WgHAjvI86e-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068716969676:android:a620f70bc1bf060d3a3c69",
+        "android_client_info": {
+          "package_name": "com.example.strava_de_gars_chaud_v2"
         }
       },
       "oauth_client": [],
