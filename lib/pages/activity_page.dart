@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:stravadegarschaud/common/geo.dart';
 import 'package:stravadegarschaud/pages/config_page.dart';
 import 'package:stravadegarschaud/pages/save_activity_page.dart';
 
@@ -124,7 +125,6 @@ class ToggleButton extends StatelessWidget {
       child: FilledButton(
         onPressed: () {
           var activity = context.read<AppModel>();
-
 
           if(isRunning) {
             showStopConfirmationDialog(context, activity.toggleRunning);

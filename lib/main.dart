@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:stravadegarschaud/common/geo.dart';
 import 'package:stravadegarschaud/pages/auth_gate_page.dart';
 import 'firebase_options.dart';
 
@@ -27,6 +28,7 @@ void main() async {
 
   initializeDateFormatting();
 
+  GeoLocalisation.initializeService();
   runApp(const MyApp());
 }
 

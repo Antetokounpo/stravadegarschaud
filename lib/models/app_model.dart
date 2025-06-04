@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:stravadegarschaud/common/bac.dart';
 
@@ -24,6 +25,7 @@ class AppModel extends ChangeNotifier {
     if(_isRunning) {
       startTimer();
       setBloodAlcoholContent();
+      startLocationTracking();
     } else {
       stopTimer();
 
@@ -38,6 +40,7 @@ class AppModel extends ChangeNotifier {
     BrosseAutosaver.resetCurrentBrosse();
     resetTimer();
     resetConsommations();
+    resetPositionTrajectory();
   }
 
   Duration duration = BrosseAutosaver.duration;
@@ -74,7 +77,13 @@ class AppModel extends ChangeNotifier {
   }
 
   void saveBrosse(String title) {
-    final brosse = Brosse(drinker: drinker, consommations: consommations, timeStarted: DateTime.now().subtract(duration), duration: duration);
+    final brosse = Brosse(
+      drinker: drinker,
+      consommations: consommations,
+      timeStarted: DateTime.now().subtract(duration),
+      duration: duration,
+      trajectory: positionTrajectory,
+    );
 
     Database.addBrosse(brosse, title, Database.auth.currentUser!.uid);
   }
@@ -84,7 +93,8 @@ class AppModel extends ChangeNotifier {
       consommations: consommations,
       drinkCounts: drinkCounts,
       duration: duration,
-      timeLastUpdate: timeLastUpdate!
+      timeLastUpdate: timeLastUpdate!,
+      trajectory: positionTrajectory
     );
   }
 
@@ -167,4 +177,31 @@ class AppModel extends ChangeNotifier {
     drinkDataList[index] = drink;
     notifyListeners();
   }
+
+  List<Position> positionTrajectory = BrosseAutosaver.trajectory;
+  StreamSubscription<Position>? _positionStreamSubscription;
+
+  void startLocationTracking() {
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high, // TEMP: to change wrt to battery usage
+      distanceFilter: 10, // 10 meters
+    );
+
+    _positionStreamSubscription = Geolocator.getPositionStream(
+      locationSettings: locationSettings,
+    ).listen(
+      (Position position) {
+        positionTrajectory.add(position);
+      }
+    );
+  }
+
+  void stopLocationTracking() {
+    _positionStreamSubscription?.cancel();
+  }
+
+  void resetPositionTrajectory() {
+    positionTrajectory = [];
+  }
+
 }

@@ -1,4 +1,6 @@
 
+import 'package:geolocator/geolocator.dart';
+
 class DrinkData {
   final String name;
   final String imagePath;
@@ -134,8 +136,15 @@ class Brosse {
   final List<Consommation> consommations;
   final DateTime timeStarted;
   final Duration duration;
+  final List<Position> trajectory;
 
-  const Brosse({required this.drinker, required this.consommations, required this.timeStarted, required this.duration});
+  const Brosse({
+    required this.drinker,
+    required this.consommations,
+    required this.timeStarted,
+    required this.duration,
+    required this.trajectory,
+    });
 
 
   Map<String, dynamic> toJson() => {
@@ -143,13 +152,15 @@ class Brosse {
     'consommations': consommations.map((e) => e.toJson()).toList(),
     'timeStarted': timeStarted.millisecondsSinceEpoch,
     'duration': duration.inMilliseconds,
+    'trajectory': trajectory.map((p) => p.toJson()).toList(),
   };
 
   factory Brosse.fromJson(Map<String, dynamic> json) => Brosse(
     drinker: Drinker.fromJson(json['drinker']),
     consommations: json['consommations'].map<Consommation>((e) => Consommation.fromJson(e)).toList(),
     timeStarted: DateTime.fromMillisecondsSinceEpoch(json['timeStarted']),
-    duration: Duration(milliseconds: json['duration'])
+    duration: Duration(milliseconds: json['duration']),
+    trajectory: json['trajectory'].map<Position>((p) => Position.fromMap(p)).toList(),
   );
 }
 

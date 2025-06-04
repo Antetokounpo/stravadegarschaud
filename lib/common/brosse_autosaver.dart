@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:stravadegarschaud/common/drink_data.dart';
 
@@ -9,12 +10,14 @@ class BrosseAutosaver {
     required Map<String, int> drinkCounts,
     required Duration duration,
     required DateTime timeLastUpdate,
+    required List<Position> trajectory,
   }) {
     currentBrosseBox['consommations'] = consommations.map((e) => e.toJson()).toList();
     currentBrosseBox['drinkCounts'] = drinkCounts;
     currentBrosseBox['duration'] = duration.inSeconds;
     currentBrosseBox['timeLastUpdate'] = timeLastUpdate.millisecondsSinceEpoch;
     currentBrosseBox['wasRunning'] = true;
+    currentBrosseBox['trajectory'] = trajectory.map((p) => p.toJson()).toList();
   }
 
   static List<Consommation> get consommations {
@@ -48,11 +51,16 @@ class BrosseAutosaver {
     return value;
   }
 
+  static List<Position> get trajectory {
+    return currentBrosseBox.get('trajectory', defaultValue: []).map<Position>((p) => Position.fromMap(p)).toList();
+  }
+
   static void resetCurrentBrosse() {
     currentBrosseBox.delete('consommations');
     currentBrosseBox.delete('drinkCounts');
     currentBrosseBox.delete('duration');
     currentBrosseBox.delete('timeLastUpdate');
     currentBrosseBox['wasRunning'] = false;
+    currentBrosseBox.delete('trajectory');
   }
 }
