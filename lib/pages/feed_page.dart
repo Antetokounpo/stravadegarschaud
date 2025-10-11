@@ -324,7 +324,7 @@ class ActivityMap extends StatelessWidget {
             // Bring your own tiles
             urlTemplate:
                 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // For demonstration only
-            userAgentPackageName: 'com.example.app', // Add your app identifier
+            userAgentPackageName: 'stravadegarschaud', // Add your app identifier
             // And many more recommended properties!
           ),
           PolylineLayer(
