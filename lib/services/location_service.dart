@@ -14,7 +14,7 @@ Future<bool> onStart(ServiceInstance service) async {
   // Configure location settings
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.bestForNavigation, // TEMP: to change wrt to battery usage
-    distanceFilter: 0, // Update every 10 meters
+    distanceFilter: 8, // Update every 10 meters
   );
 
   // Subscribe to the position stream
