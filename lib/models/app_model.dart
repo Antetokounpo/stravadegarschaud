@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:stravadegarschaud/common/bac.dart';
@@ -179,25 +180,22 @@ class AppModel extends ChangeNotifier {
   }
 
   List<Position> positionTrajectory = BrosseAutosaver.trajectory;
-  StreamSubscription<Position>? _positionStreamSubscription;
+  StreamSubscription<Map<String, dynamic>?>? _positionStreamSubscription;
 
   void startLocationTracking() {
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high, // TEMP: to change wrt to battery usage
-      distanceFilter: 10, // 10 meters
-    );
-
-    _positionStreamSubscription = Geolocator.getPositionStream(
-      locationSettings: locationSettings,
-    ).listen(
-      (Position position) {
-        positionTrajectory.add(position);
+    final service = FlutterBackgroundService();
+    service.startService();
+    _positionStreamSubscription = service.on('update')
+    .listen(
+      (Map<String, dynamic>? position) {
+        positionTrajectory.add(Position.fromMap(position));
       }
     );
   }
 
   void stopLocationTracking() {
     _positionStreamSubscription?.cancel();
+    FlutterBackgroundService().invoke("stop");
   }
 
   void resetPositionTrajectory() {
