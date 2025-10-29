@@ -305,8 +305,8 @@ class ActivityMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var averageLat = [for (var p in trajectory) p.latitude].average;
-    var averageLng = [for (var p in trajectory) p.longitude].average;
+    var lats = [for (var p in trajectory) p.latitude];
+    var lngs = [for (var p in trajectory) p.longitude];
 
     return SizedBox(
       height: 200,
@@ -314,8 +314,8 @@ class ActivityMap extends StatelessWidget {
       child: FlutterMap(
         options: MapOptions(
           initialCenter: LatLng(
-            averageLat,
-            averageLng,
+            lats.isEmpty ? 50.5 : lats.average,
+            lngs.isEmpty ? 30.51 : lngs.average,
           ), // Center the map over the average coordinate
           initialZoom: 15.0,
         ),
