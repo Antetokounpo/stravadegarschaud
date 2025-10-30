@@ -1,6 +1,6 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -17,7 +17,12 @@ import 'common/brosse_autosaver.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dir = await getApplicationDocumentsDirectory();
-  Hive.defaultDirectory = dir.path;
+  Hive.init(dir.path);
+
+  // Open all the Hive boxes
+  await Hive.openBox('current_brosse');
+  await Hive.openBox('config');
+  await Hive.openBox('consos');
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

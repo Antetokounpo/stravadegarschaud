@@ -13,7 +13,7 @@ class DrinkData {
 
   const DrinkData(this.name, this.imagePath, this.abv, this.volume);
 
-  factory DrinkData.fromJson(Map<String, dynamic> json) => DrinkData(
+  factory DrinkData.fromJson(Map<dynamic, dynamic> json) => DrinkData(
     json['name'],
     json['imagePath'],
     json['abv'],
@@ -72,8 +72,8 @@ class Consommation {
     'drink': drink.toJson()
   };
 
-  factory Consommation.fromJson(Map<String, dynamic> json) => Consommation(
-    DrinkData.fromJson(json['drink'] as Map<String, dynamic>),
+  factory Consommation.fromJson(Map<dynamic, dynamic> json) => Consommation(
+    DrinkData.fromJson(json['drink']),
     Duration(seconds: json['timeConsumed']),
   );
 }
@@ -99,7 +99,7 @@ class Weight {
     'weight': weight
   };
 
-  factory Weight.fromJson(Map<String, dynamic> json) => Weight(
+  factory Weight.fromJson(Map<dynamic, dynamic> json) => Weight(
     json['weight'] as int,
     WeightUnit.values[json['unit'] as int]
   );
@@ -125,7 +125,7 @@ class Drinker {
     'weight': weight.toJson()
   };
 
-  factory Drinker.fromJson(Map<String, dynamic> json) => Drinker(
+  factory Drinker.fromJson(Map<dynamic, dynamic> json) => Drinker(
     json['sex'] ? Sex.male : Sex.female,
     Weight.fromJson(json['weight']),
   );

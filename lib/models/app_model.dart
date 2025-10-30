@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:stravadegarschaud/common/bac.dart';
 
 import 'package:stravadegarschaud/common/brosse_autosaver.dart';
@@ -12,8 +12,8 @@ import '../common/drink_data.dart';
 
 
 class AppModel extends ChangeNotifier {
-  final configBox = Hive.box(name: 'config');
-  final consosBox = Hive.box(name: 'consos');
+  final configBox = Hive.box('config');
+  final consosBox = Hive.box('consos');
   final currentBrosseBox = BrosseAutosaver.currentBrosseBox;
 
   var _isRunning = false;
@@ -142,13 +142,13 @@ class AppModel extends ChangeNotifier {
   Drinker get drinker => Drinker.fromJson(configBox.get('drinker', defaultValue: const Drinker(Sex.male, Weight(0)).toJson()));
   
   void setSex(Sex sex) {
-    configBox['drinker'] = Drinker(sex, drinker.weight);
+    configBox.put('drinker', Drinker(sex, drinker.weight).toJson());
     setBloodAlcoholContent();
     notifyListeners();
   }
 
   void setWeight(Weight weight) {
-    configBox['drinker'] = Drinker(drinker.sex, weight);
+    configBox.put('drinker', Drinker(drinker.sex, weight).toJson());
     setBloodAlcoholContent();
     notifyListeners();
   }
@@ -156,13 +156,13 @@ class AppModel extends ChangeNotifier {
   List<DrinkData>? _drinkDataList;
 
   List<DrinkData> get drinkDataList {
-    _drinkDataList ??= consosBox.getRange(0, consosBox.length).map(((e) => DrinkData.fromJson(e))).toList();
+    _drinkDataList ??= consosBox.values.map(((e) => DrinkData.fromJson(e))).toList();
 
     return _drinkDataList!;
   }
 
   void addDrink(DrinkData drink) {
-    consosBox.add(drink);
+    consosBox.add(drink.toJson());
     drinkDataList.add(drink); // Is drinkDataList a reference?
     notifyListeners();
   }
@@ -174,7 +174,7 @@ class AppModel extends ChangeNotifier {
   }
 
   void modifyDrink(DrinkData drink, int index) {
-    consosBox.putAt(index, drink);
+    consosBox.putAt(index, drink.toJson());
     drinkDataList[index] = drink;
     notifyListeners();
   }
