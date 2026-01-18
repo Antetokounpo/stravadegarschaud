@@ -33,7 +33,7 @@ void main() async {
 
   initializeDateFormatting();
 
-  await GeoLocalisation.initializeBackgroundService();
+  //await GeoLocalisation.initializeBackgroundService();
   await GeoLocalisation.initializeService();
   runApp(const MyApp());
 }

@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:stravadegarschaud/common/bac.dart';
 
 import 'package:stravadegarschaud/common/brosse_autosaver.dart';
 import 'package:stravadegarschaud/common/db_commands.dart';
+import 'package:stravadegarschaud/common/geo.dart';
 import '../common/drink_data.dart';
 
 
@@ -180,22 +180,23 @@ class AppModel extends ChangeNotifier {
   }
 
   List<Position> positionTrajectory = BrosseAutosaver.trajectory;
-  StreamSubscription<Map<String, dynamic>?>? _positionStreamSubscription;
+  StreamSubscription<Position>? _positionStreamSubscription;
 
   void startLocationTracking() {
-    final service = FlutterBackgroundService();
-    service.startService();
-    _positionStreamSubscription = service.on('update')
-    .listen(
-      (Map<String, dynamic>? position) {
-        positionTrajectory.add(Position.fromMap(position));
-      }
+    _positionStreamSubscription = GeoLocalisation.getPositionStream()
+    .listen((Position position) {
+      // Example: Print and update the notification to show activity
+      print('BACKGROUND LOCATION: ${position.latitude}, ${position.longitude}');
+      positionTrajectory.add(position);
+    }, 
+    onError: (e) {
+      print('Location Stream Error: $e');
+    }
     );
   }
 
   void stopLocationTracking() {
     _positionStreamSubscription?.cancel();
-    FlutterBackgroundService().invoke("stop");
   }
 
   void resetPositionTrajectory() {
