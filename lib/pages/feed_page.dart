@@ -11,6 +11,7 @@ import 'package:stravadegarschaud/common/bac.dart';
 
 import 'package:stravadegarschaud/common/db_commands.dart';
 import 'package:stravadegarschaud/common/drink_data.dart';
+import 'package:stravadegarschaud/pages/comments_page.dart';
 
 class FeedCardHeader extends StatelessWidget {
   final DateTime timeStarted;
@@ -157,9 +158,10 @@ class FeedCardButtons extends StatefulWidget {
 }
 
 class _FeedCardButtonsState extends State<FeedCardButtons> {
-  // Cette valeur a besoin d'être intialisé parce qu'elle ne peut être null
+  // Ces valeurs ont besoin d'être intialisées parce qu'elles ne peuvent être null
   Future<bool> _liked = Future.value(false);
   Future<int> _likeCount = Future.value(0);
+  Future<int> _commentsCount = Future.value(0);
 
   // On regarde dans la DB si l'activité est déjà liké
   @override
@@ -186,6 +188,11 @@ class _FeedCardButtonsState extends State<FeedCardButtons> {
       _liked = Future.value(true);
       _likeCount = _likeCount.then((count) => count + 1);
     });
+  }
+
+  void commentsCallback() {
+    // Pas sûr de comprendre à quel context on fait référence ici
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CommentsPage()));
   }
 
   @override
@@ -219,7 +226,22 @@ class _FeedCardButtonsState extends State<FeedCardButtons> {
             },
           ),
           FeedCardButtons.divider,
-          const FeedCardSingleButton(icon: Icon(Icons.comment)),
+          FutureBuilder(
+            future: _commentsCount,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final commentsCount = snapshot.data!;
+
+                return FeedCardSingleButton(
+                  icon: Icon(Icons.comment), 
+                  number: commentsCount.toString(),
+                  callback: commentsCallback,
+                );
+              } else {
+                return const FeedCardSingleButton(icon: Icon(Icons.abc));
+              }
+            }
+          ),
           FeedCardButtons.divider,
           const FeedCardSingleButton(icon: Icon(Icons.share)),
         ],
