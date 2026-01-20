@@ -72,7 +72,8 @@ class Database {
     db.collection("comments").add({
       "brosseId": brosseId,
       "userId": uid,
-      "text": text
+      "text": text,
+      "datetime": DateTime.now().microsecondsSinceEpoch
     });
   }
 

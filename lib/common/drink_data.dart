@@ -196,16 +196,19 @@ class Comment {
   final String activityId;
   final String userId;
   final String text;
+  final DateTime datetime;
 
   const Comment({
     required this.activityId,
     required this.userId,
-    required this.text
+    required this.text,
+    required this.datetime,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
     activityId: json['brosseId'],
     userId: json['userId'],
-    text: json['text']
+    text: json['text'],
+    datetime: DateTime.fromMicrosecondsSinceEpoch(json['datetime'])
   );
 }

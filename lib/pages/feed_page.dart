@@ -192,7 +192,7 @@ class _FeedCardButtonsState extends State<FeedCardButtons> {
 
   void commentsCallback() {
     // Pas sûr de comprendre à quel context on fait référence ici
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CommentsPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CommentsPage(brosseId: widget.activityId, userId: FeedCardButtons.currentUserId)));
   }
 
   @override
