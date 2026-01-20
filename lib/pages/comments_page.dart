@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:stravadegarschaud/common/db_commands.dart';
 import 'package:stravadegarschaud/common/drink_data.dart';
 
@@ -53,6 +54,7 @@ class CommentsPage extends StatelessWidget {
                                 child: CommentTile(
                                   text: comments[index].text,
                                   userName: snapshot.data!,
+                                  datetime: comments[index].datetime,
                                 ),
                               );
                             } else {
@@ -158,11 +160,13 @@ class CommentTile extends StatelessWidget {
 
   final String text;
   final String userName;
+  final DateTime datetime;
 
   const CommentTile({
     super.key,
     required this.text,
-    required this.userName
+    required this.userName,
+    required this.datetime
   });
 
   @override
@@ -183,7 +187,7 @@ class CommentTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                userName,
+                "$userName | ${DateFormat('yyyy-MM-dd HH:mm').format(datetime)}",
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.grey[700],
