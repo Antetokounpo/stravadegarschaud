@@ -67,4 +67,18 @@ class Database {
       (collection) => collection.docs.length
     );
   }
+
+  static void commentActivity(String brosseId, String uid, String text) {
+    db.collection("comments").add({
+      "brosseId": brosseId,
+      "userId": uid,
+      "text": text
+    });
+  }
+
+  static Future<List<Comment>> getCommentsOnActivity(String brosseId) {
+    return db.collection("comments").where("brosseId", isEqualTo: brosseId).get().then(
+      (collection) => [for (var c in collection.docs) Comment.fromJson(c.data())]
+    );
+  }
 }

@@ -191,3 +191,21 @@ class Activity {
     activityId: json['activityId'],
   );
 }
+
+class Comment {
+  final String activityId;
+  final String userId;
+  final String text;
+
+  const Comment({
+    required this.activityId,
+    required this.userId,
+    required this.text
+  });
+
+  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
+    activityId: json['brosseId'],
+    userId: json['userId'],
+    text: json['text']
+  );
+}
