@@ -169,6 +169,7 @@ class _FeedCardButtonsState extends State<FeedCardButtons> {
     super.initState();
     _liked = isAlreadyLiked();
     _likeCount = Database.getLikeCount(widget.activityId);
+    _commentsCount = Database.getCommentCount(widget.activityId);
   }
 
   Future<bool> isAlreadyLiked() {

@@ -82,4 +82,10 @@ class Database {
       (collection) => [for (var c in collection.docs) Comment.fromJson(c.data())]
     );
   }
+
+  static Future<int> getCommentCount(String brosseId) {
+    return getCommentsOnActivity(brosseId).then(
+      (comments) => comments.length
+    );
+  }
 }
