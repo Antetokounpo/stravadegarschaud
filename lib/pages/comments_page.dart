@@ -3,11 +3,23 @@ import 'package:intl/intl.dart';
 import 'package:stravadegarschaud/common/db_commands.dart';
 import 'package:stravadegarschaud/common/drink_data.dart';
 
-class CommentsPage extends StatelessWidget {
+class CommentsPage extends StatefulWidget {
   final String brosseId;
   final String userId;
 
   const CommentsPage({super.key, required this.brosseId, required this.userId});
+
+  @override
+  State<CommentsPage> createState() => _CommentsPageState();
+}
+
+class _CommentsPageState extends State<CommentsPage> {
+
+  void refresh() {
+    setState(() {
+      
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +49,12 @@ class CommentsPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: FutureBuilder(
-                  future: Database.getCommentsOnActivity(brosseId),
+                  future: Database.getCommentsOnActivity(widget.brosseId),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       List<Comment> comments = snapshot.data!;
                       comments.sort((a, b) => a.datetime.compareTo(b.datetime));
-                      //return Placeholder();
+
                       return ListView.builder(
                         itemCount: comments.length,
                         itemBuilder: (context, index) => FutureBuilder(
@@ -82,8 +94,8 @@ class CommentsPage extends StatelessWidget {
                 ),
               ),
             ),
-            Spacer(),
-            CommentBoxForm(brosseId: brosseId, userId: userId),
+            //Spacer(),
+            CommentBoxForm(brosseId: widget.brosseId, userId: widget.userId, callback: refresh),
           ],
         ),
       ),
@@ -94,11 +106,13 @@ class CommentsPage extends StatelessWidget {
 class CommentBoxForm extends StatefulWidget {
   final String brosseId;
   final String userId;
+  final Function callback;
 
   const CommentBoxForm({
     super.key,
     required this.brosseId,
     required this.userId,
+    required this.callback,
   });
 
   @override
@@ -141,8 +155,10 @@ class _CommentBoxFormState extends State<CommentBoxForm> {
                 );
 
                 // This is utterly RETARDED
-                Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CommentsPage(brosseId: widget.brosseId, userId: widget.userId)));
+                //Navigator.of(context).pop();
+                //Navigator.push(context, MaterialPageRoute(builder: (context) => CommentsPage(brosseId: widget.brosseId, userId: widget.userId)));
+
+                widget.callback();
 
                 // Clear la box de texte après soumission
                 _controller.clear();
